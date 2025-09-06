@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta chaRset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Financial Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav class="col-md-3 col-lg-2 bg-dark sidebar">
+        <div class="pt-3">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" id="homeLink" href="#home">
+                <i class="bi bi-house-door"></i> Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="addPaymentLink" href="#" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
+                <i class="bi bi-wallet"></i> Add Payment
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="useRsLink" href="#" data-bs-toggle="modal" data-bs-target="#addSupplyModal">
+                <i class="bi bi-cart"></i> Add Supply 
+              </a>
+            </li>
+            <button id="logoutBtn" class="btn btn-outline-danger">
+              <i class="bi bi-box-arrow-right me-2"></i>Logout
+          </button>
+
+          </ul>
+        </div>
+      </nav>
+      <!-- Main Content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div>
+          <h1 class="pt-3 pb-2 mb-3 border-bottom">Financial Dashboard</h1>
+          <!-- KPI Summary Cards -->
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="card bg-primary text-white">
+                <div class="card-body">
+                  <h5>Total Revenue</h5>
+                  <h2>Rs124,500</h2>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-success text-white">
+                <div class="card-body">
+                  <h5>Pending Payments</h5>
+                  <h2 id="pending-payments-total">Rs0</h2>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-warning text-dark">
+                <div class="card-body">
+                  <h5>Best Monthly Revenue</h5>
+                  <h2>Rs45,200</h2>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-info text-white">
+                <div class="card-body">
+                  <h5>Total Supply</h5>
+                  <h2 id="total-supply-value">Rs0</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Charts Row -->
+          <div class="row mb-4">
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-body">
+                  <h5>Revenue Trends</h5>
+                  <canvas id="revenueChart"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5>Supplier Tracking</h5>
+                  <canvas id="expenditureChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Tables Row -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">Pending Payments</div>
+                <div class="card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Client</th>
+                        <th>Amount</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="pending-payments-table-body">
+                      <tr>
+                        <td colspan="4" class="text-center text-danger">
+                          Failed to load pending payments data. Please try again later.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">Supply Tracking</div>
+                <div class="card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="supply-table-body">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+
+ 
+<!-- Payment Modal -->
+<div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered custom-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addPaymentModalLabel">
+          <i class="bi bi-credit-card me-2"></i>Add New Payment
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="paymentForm">
+          <div class="form-floating mb-4">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-person-circle"></i>
+              </span>
+              <input type="text" class="form-control" id="clientName" placeholder="Enter client name" required>
+            </div>
+          </div>
+          
+          <div class="form-floating mb-4">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-currency-dollar"></i>
+              </span>
+              <input type="number" class="form-control" id="paymentAmount" placeholder="Enter amount" required>
+            </div>
+          </div>
+          
+          <div class="form-floating mb-4">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-calendar-event"></i>
+              </span>
+              <input type="date" class="form-control" id="dueDate" required>
+            </div>
+          </div>
+          
+          <div class="form-floating mb-4">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-tag"></i>
+              </span>
+              <select class="form-select" id="status" required>
+                <option value="pending">Pending</option>
+                <option value="overdue">Overdue</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-2"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-primary" id="submitPayment">
+          <i class="bi bi-check-circle me-2"></i>Add Payment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Supply Modal -->
+<div class="modal fade" id="addSupplyModal" tabindex="-1" aria-labelledby="addSupplyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered custom-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addSupplyModalLabel">
+          <i class="bi bi-box-seam me-2"></i>Add New Supply
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="supplyForm">
+          <div class="form-floating mb-4">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-cart3"></i>
+              </span>
+              <input type="text" class="form-control" id="itemName" placeholder="Enter item name" required>
+            </div>
+          </div>
+          
+          <div class="form-floating mb-4">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-123"></i>
+              </span>
+              <input type="number" class="form-control" id="quantity" placeholder="Enter quantity" required>
+            </div>
+          </div>
+          
+          <div class="form-floating mb-4">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-currency-dollar"></i>
+              </span>
+              <input type="number" class="form-control" id="value" placeholder="Enter amount" required>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-2"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-primary" id="submitSupply">
+          <i class="bi bi-check-circle me-2"></i>Add Supply
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="main.js" defer></script>
+</body>
+</html>
